@@ -2,13 +2,13 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.5'
 	id 'io.spring.dependency-management' version '1.1.0'
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	// querydsl관련 명령어를 gradle탭에 생성해준다. (권장사항)
+	// id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'study'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -27,7 +27,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// Querydsl 추가
+	//⭐ Spring boot 3.x이상에서 QueryDsl 패키지를 정의하는 방법
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
@@ -38,19 +38,17 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//querydsl 추가 시작
+// === ⭐ QueryDsl 빌드 옵셥 ===
 def querydslDir = "$buildDir/generated/querydsl"
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
-}
+
 sourceSets {
-	main.java.srcDir querydslDir
+	main.java.srcDirs += [ querydslDir ]
 }
-configurations {
-	querydsl.extendsFrom compileClasspath
+
+tasks.withType(JavaCompile) {
+	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
-compileQuerydsl {
-	options.annotationProcessorPath = configurations.querydsl
+
+clean.doLast {
+	file(querydslDir).deleteDir()
 }
-//querydsl 추가 끝
