@@ -147,8 +147,13 @@ public class QuerydslBasicTest {
                 .selectFrom(member)
                         .fetch().size();
 
+<<<<<<< Updated upstream
         int getOffst = results.co;
 
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
         assertThat(totalSize).isEqualTo(4); // assertThat(queryResults.getTotal()).isEqualTo(4)
         assertThat(results.size()).isEqualTo(2); // assertThat(queryResults.getResults().size()).isEqualTo(2);
         assertThat(results.size()).isNotEqualTo(totalSize);
@@ -156,6 +161,10 @@ public class QuerydslBasicTest {
         System.out.println("totalSize = " + totalSize);
 
     }
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 
 
