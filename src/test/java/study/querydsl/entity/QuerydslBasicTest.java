@@ -1,5 +1,6 @@
 package study.querydsl.entity;
 
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,6 +95,11 @@ public class QuerydslBasicTest {
 
         Member fetchFirst = queryFactory.selectFrom(member)
                 .fetchFirst();// limit(1).fetchOne()와 같은 메서드
+        
+        /*
+         https://velog.io/@nestour95/QueryDsl-fetchResults%EA%B0%80-deprecated-%EB%90%9C-%EC%9D%B4%EC%9C%A0
+         fetchResult()는 사용되지 않으며 이렇게 해결
+        */
     }
 
     @Test
@@ -116,7 +122,40 @@ public class QuerydslBasicTest {
         assertThat(memberNull.getUsername()).isNull();
     }
 
+    @Test
+    public void paging1() { // 조회 건수 제한
+        List<Member> result = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)  // 어디서부터 시작할거냐
+                .limit(2)
+                .fetch();
 
+        assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void paging2() { // 전체 조회
+        List<Member> results = queryFactory
+                .selectFrom(member)
+                .orderBy(member.username.desc())
+                .offset(1)  // 어디서부터 시작할거냐
+                .limit(2)
+                .fetch();
+
+        int totalSize = queryFactory    // 강의의 queryResults.getTotal()
+                .selectFrom(member)
+                        .fetch().size();
+
+        int getOffst = results.co;
+
+        assertThat(totalSize).isEqualTo(4); // assertThat(queryResults.getTotal()).isEqualTo(4)
+        assertThat(results.size()).isEqualTo(2); // assertThat(queryResults.getResults().size()).isEqualTo(2);
+        assertThat(results.size()).isNotEqualTo(totalSize);
+        System.out.println("results.size() = " + results.size());
+        System.out.println("totalSize = " + totalSize);
+
+    }
 
 
 
