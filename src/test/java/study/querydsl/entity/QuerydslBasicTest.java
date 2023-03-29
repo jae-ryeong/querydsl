@@ -1,5 +1,6 @@
 package study.querydsl.entity;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
+import static study.querydsl.entity.QTeam.team;
 
 @SpringBootTest
 @Transactional
@@ -147,13 +149,6 @@ public class QuerydslBasicTest {
                 .selectFrom(member)
                         .fetch().size();
 
-<<<<<<< Updated upstream
-        int getOffst = results.co;
-
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
         assertThat(totalSize).isEqualTo(4); // assertThat(queryResults.getTotal()).isEqualTo(4)
         assertThat(results.size()).isEqualTo(2); // assertThat(queryResults.getResults().size()).isEqualTo(2);
         assertThat(results.size()).isNotEqualTo(totalSize);
@@ -161,13 +156,50 @@ public class QuerydslBasicTest {
         System.out.println("totalSize = " + totalSize);
 
     }
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
+    @Test
+    public void aggregation() {
+        List<Tuple> result = queryFactory   // Tuple로 조회
+                .select(
+                        member.count(),
+                        member.age.sum(),
+                        member.age.avg(),
+                        member.age.max(),
+                        member.age.min())
+                .from(member)
+                .fetch();
+
+        Tuple tuple = result.get(0);
+        assertThat(tuple.get(member.count())).isEqualTo(4);
+        assertThat(tuple.get(member.age.sum())).isEqualTo(100);
+        assertThat(tuple.get(member.age.avg())).isEqualTo(25);
+        assertThat(tuple.get(member.age.max())).isEqualTo(40);
+        assertThat(tuple.get(member.age.min())).isEqualTo(10);
+    }
+
+    @Test
+    public void group() throws Exception{
+        //given
+        List<Tuple> result = queryFactory
+                .select(team.name, member.age.avg())    // QTeam.team.name
+                .from(member)
+                .join(member.team, team)    // Member에 있는 team과 그냥 team을 조인
+                .groupBy(team.team)
+                .fetch();
 
 
+        Tuple teamA = result.get(0);    // teamA
+        Tuple teamB = result.get(1);    // teamB
 
+        //when
+        System.out.println("teamA = " + teamA); // teamA = [teamA, 15.0]
+
+        //then
+        assertThat(teamA.get(team.name)).isEqualTo("teamA");
+        assertThat(teamA.get(member.age.avg())).isEqualTo(15);
+        assertThat(teamB.get(team.name)).isEqualTo("teamB");
+        assertThat(teamB.get(member.age.avg())).isEqualTo(35);
+    }
 
 
 
