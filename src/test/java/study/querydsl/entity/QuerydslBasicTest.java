@@ -103,7 +103,7 @@ public class QuerydslBasicTest {
         assertThat(findMember.getUsername()).isEqualTo("member1");
     }
 
-    @Test
+/*    @Test
     public void resultFetch() {
         List<Member> fetch = queryFactory
                 .selectFrom(member)
@@ -115,11 +115,11 @@ public class QuerydslBasicTest {
         Member fetchFirst = queryFactory.selectFrom(member)
                 .fetchFirst();// limit(1).fetchOne()와 같은 메서드
         
-        /*
+        *//*
          https://velog.io/@nestour95/QueryDsl-fetchResults%EA%B0%80-deprecated-%EB%90%9C-%EC%9D%B4%EC%9C%A0
          fetchResult()는 사용되지 않으며 이렇게 해결
-        */
-    }
+        *//*
+    }*/
 
     @Test
     public void sort() {
